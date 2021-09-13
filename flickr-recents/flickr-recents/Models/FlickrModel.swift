@@ -13,23 +13,22 @@ class FlickrModel {
     var lastPage = 1
     var photos = [Photo]()
     
-    func loadFirstPage(onSuccess: @escaping () -> ()) {
+    func loadFirstPage() {
         self.currentPage = 1
         self.lastPage = 1
-        getPhotos(at: 1, append: false, onSuccess: onSuccess)
+        getPhotos(at: 1, append: false)
     }
     
-    func loadNextPage(onSuccess: @escaping () -> ()) {
+    func loadNextPage() {
         if currentPage < lastPage {
             currentPage += 1
-            print("loading: \(currentPage)")
-            getPhotos(at: currentPage, onSuccess: onSuccess)
+            getPhotos(at: currentPage)
         } else {
             print("No more pages to get.")
         }
     }
     
-    func getPhotos(at page: Int, append: Bool = true, onSuccess: @escaping () -> ()) {
+    func getPhotos(at page: Int, append: Bool = true) {
         NetworkManager.shared.fetchImages(page: page) { [weak self] result in
             switch result {
             case .success(let response):
@@ -40,7 +39,7 @@ class FlickrModel {
                 } else {
                     self?.photos = response.photos.photo
                 }
-                onSuccess()
+                NotificationCenter.default.post(name: receivedPhotosNotification, object: nil)
             case .failure(let error):
                 print("Error getting photos\(error.rawValue)")
             }

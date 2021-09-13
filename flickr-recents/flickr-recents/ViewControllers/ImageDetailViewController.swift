@@ -38,6 +38,13 @@ class ImageDetailViewController: UIViewController {
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.isPagingEnabled = true
+        NotificationCenter.default.addObserver(self, selector: #selector(onReceivePhotos(_:)), name: receivedPhotosNotification, object: nil)
+    }
+    
+    @objc func onReceivePhotos(_ notification: Notification) {
+        DispatchQueue.main.async { [weak self] in
+            self?.collectionView.reloadData()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -63,11 +70,7 @@ extension ImageDetailViewController: UICollectionViewDataSource, UICollectionVie
         let photo = flickrModel.photos[indexPath.row]
         cell.configure(photo: photo, screenSize: collectionView.frame.size)
         if indexPath.row == (flickrModel.photos.count - buffer) {
-            flickrModel.loadNextPage { [weak self] in
-                DispatchQueue.main.async {
-                    self?.collectionView.reloadData()
-                }
-            }
+            flickrModel.loadNextPage()
         }
         return cell
     }

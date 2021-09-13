@@ -24,16 +24,19 @@ class ImageGalleryViewController: UIViewController {
         collectionView.dataSource = self
         collectionView.register(PhotoCollectionViewCell.self, forCellWithReuseIdentifier: galleryCellIdentifier)
         collectionView.backgroundColor = .white
-        flickrModel.loadFirstPage { [weak self] in
-            DispatchQueue.main.async {
-                self?.collectionView.reloadData()
-            }
-        }
+        NotificationCenter.default.addObserver(self, selector: #selector(onReceivePhotos(_:)), name: receivedPhotosNotification, object: nil)
+        flickrModel.loadFirstPage()
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
         collectionView.collectionViewLayout.invalidateLayout()
+    }
+    
+    @objc func onReceivePhotos(_ notification: Notification) {
+        DispatchQueue.main.async { [weak self] in
+            self?.collectionView.reloadData()
+        }
     }
 }
 
@@ -48,13 +51,8 @@ extension ImageGalleryViewController: UICollectionViewDataSource, UICollectionVi
         let photo = flickrModel.photos[indexPath.row]
         cell.configure(photo: photo)
         if indexPath.row == (flickrModel.photos.count - buffer) {
-            flickrModel.loadNextPage { [weak self] in
-                DispatchQueue.main.async {
-                    self?.collectionView.reloadData()
-                }
-            }
+            flickrModel.loadNextPage()
         }
-        
         return cell
     }
     

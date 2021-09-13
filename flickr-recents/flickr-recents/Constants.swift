@@ -10,3 +10,4 @@ import Foundation
 let galleryCellIdentifier = "photoCollectionCell"
 let detailCellIdentifier = "detailPhotoCollectionCell"
 let imageServerURL = "https://live.staticflickr.com/"
+let receivedPhotosNotification = Notification.Name("ReceivedPhotos")
