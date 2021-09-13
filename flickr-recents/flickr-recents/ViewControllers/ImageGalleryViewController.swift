@@ -18,9 +18,11 @@ class ImageGalleryViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        self.navigationItem.title = "Gallery"
+        self.navigationItem.backButtonTitle = "Gallery"
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.register(PhotoCollectionViewCell.self, forCellWithReuseIdentifier: cellIdentifier)
+        collectionView.register(PhotoCollectionViewCell.self, forCellWithReuseIdentifier: galleryCellIdentifier)
         collectionView.backgroundColor = .white
         flickrModel.loadFirstPage { [weak self] in
             DispatchQueue.main.async {
@@ -42,11 +44,9 @@ extension ImageGalleryViewController: UICollectionViewDataSource, UICollectionVi
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellIdentifier, for: indexPath) as! PhotoCollectionViewCell
-        let thumbImageString = flickrModel.photos[indexPath.row].thumbURL
-        let url = URL(string: thumbImageString)
-        cell.photo.contentMode = .scaleToFill
-        cell.photo.sd_setImage(with: url)
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: galleryCellIdentifier, for: indexPath) as! PhotoCollectionViewCell
+        let photo = flickrModel.photos[indexPath.row]
+        cell.configure(photo: photo)
         if indexPath.row == (flickrModel.photos.count - buffer) {
             flickrModel.loadNextPage { [weak self] in
                 DispatchQueue.main.async {
@@ -70,5 +70,20 @@ extension ImageGalleryViewController: UICollectionViewDataSource, UICollectionVi
             return CGSize(width: width/5, height: height/2)
         }
         return CGSize(width: width/3, height: height/4)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let detailVC = ImageDetailViewController()
+        detailVC.flickrModel = self.flickrModel
+        detailVC.startingIndex = indexPath
+        detailVC.delegate = self
+        self.navigationController?.pushViewController(detailVC, animated: true)
+    }
+}
+
+extension ImageGalleryViewController: GalleryDetailSyncDelegate {
+    func set(indexPath: IndexPath) {
+        collectionView.reloadData()
+        collectionView.scrollToItem(at: indexPath, at: .centeredVertically, animated: false)
     }
 }

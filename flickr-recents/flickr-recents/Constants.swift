@@ -7,5 +7,6 @@
 
 import Foundation
 
-let cellIdentifier = "photoCollectionCell"
+let galleryCellIdentifier = "photoCollectionCell"
+let detailCellIdentifier = "detailPhotoCollectionCell"
 let imageServerURL = "https://live.staticflickr.com/"

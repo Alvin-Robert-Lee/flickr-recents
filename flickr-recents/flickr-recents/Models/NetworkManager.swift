@@ -52,7 +52,6 @@ class NetworkManager {
     //https://www.flickr.com/services/rest/?method=flickr.photos.getRecent&api_key=fee10de350d1f31d5fec0eaf330d2dba&per_page=5&page=1&format=json&nojsoncallback=1
     func fetchImages(page: Int, perPage: Int = 20, completion: @escaping (Result<FlickrResponse, NetworkingError>) -> ()) {
         let urlString = "\(flickrURL)&api_key=\(apiKey)&per_page=\(perPage)&page=\(page)&format=json&nojsoncallback=1"
-        print(urlString)
         guard let url = URL(string: urlString) else {
             completion(.failure(.urlFailure))
             return

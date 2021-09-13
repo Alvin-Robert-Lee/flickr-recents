@@ -22,6 +22,7 @@ class FlickrModel {
     func loadNextPage(onSuccess: @escaping () -> ()) {
         if currentPage < lastPage {
             currentPage += 1
+            print("loading: \(currentPage)")
             getPhotos(at: currentPage, onSuccess: onSuccess)
         } else {
             print("No more pages to get.")
@@ -39,7 +40,6 @@ class FlickrModel {
                 } else {
                     self?.photos = response.photos.photo
                 }
-                print("self.photos\(response.photos.photo)")
                 onSuccess()
             case .failure(let error):
                 print("Error getting photos\(error.rawValue)")
