@@ -12,7 +12,8 @@ class PhotoDetailCollectionViewCell: UICollectionViewCell {
     
     let photoImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
         return imageView
     }()
     
@@ -42,7 +43,7 @@ class PhotoDetailCollectionViewCell: UICollectionViewCell {
     func configure(photo: Photo, screenSize: CGSize) {
         title.text = photo.title.count > 0 ? photo.title : "No Title Provided"
         let url = URL(string: photo.largeImageURL)
-        title.widthAnchor.constraint(equalToConstant: screenSize.width * 0.8).isActive = true
+        title.widthAnchor.constraint(equalToConstant: screenSize.width * 0.9).isActive = true
         title.heightAnchor.constraint(equalToConstant: screenSize.height * 0.2).isActive = true
         photoImageView.sd_setImage(with: url)
     }
